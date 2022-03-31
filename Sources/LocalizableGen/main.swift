@@ -1,0 +1,3 @@
+import LocalizableGenCore
+
+LocalizableGen.main()
