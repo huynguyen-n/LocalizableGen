@@ -59,42 +59,16 @@ class GoogleOAuth {
 
     func buildCredentialsJSONFile() throws {
         do {
-            guard let credentialsPath = ProcessInfo.processInfo.environment[Constant.App.credentialKey] else {
-                throw CredentialsError(reason: .processInfoNotDefined)
-            }
-            let credentialsURL = URL(fileURLWithPath: credentialsPath)
-            let fileName = credentialsURL.lastPathComponent
-            let folderBuild = credentialsURL.deletingLastPathComponent()
-            let folder = try Folder(path: folderBuild.path + "/")
-            let file = try folder.createFile(named: fileName)
-            let credentials = Constant.OAuth.Credentials.self
-            let serviceAccount = ServiceAccountCredentials(
-                CredentialType: credentials.type,
-                ProjectId: credentials.projectId,
-                PrivateKeyId: credentials.privateKeyId,
-                PrivateKey: credentials.privateKey,
-                ClientEmail: credentials.clientEmail,
-                ClientID: credentials.clientID,
-                AuthURI: credentials.authURI,
-                TokenURI: credentials.tokenURI,
-                AuthProviderX509CertURL: credentials.authProviderX509CertURL,
-                ClientX509CertURL: credentials.clientX509CertURL
-            )
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let data = try encoder.encode(serviceAccount)
-            try file.write(data)
+            let folder = try Folder(path: Folder.temporaryDirectory)
+            let file = try folder.createFile(named: Constant.OAuth.Credentials.fileName)
+            try file.write(try ServiceAccountCredentials.encodeJSON())
         } catch {
-            WriteError(path: error.asTo(WriteError.self).path, reason: .fileCreationFailed)
+            throw WriteError(path: Folder.temporaryDirectory, reason: .fileCreationFailed)
         }
     }
 
     func getCredentialEmail() throws -> String {
-        guard let credentialsPath = ProcessInfo.processInfo.environment[Constant.App.credentialKey] else {
-            throw CredentialsError(reason: .processInfoNotDefined)
-        }
-
-        guard let credentialsData = try? Data(contentsOf: URL(fileURLWithPath: credentialsPath), options:[]) else {
+        guard let credentialsData = try? Data(contentsOf: URL(fileURLWithPath: Folder.credentialsFilePath), options:[]) else {
             throw CredentialsError(reason: .parseCredentialsData)
         }
 
@@ -126,6 +100,31 @@ class GoogleOAuth {
         semaphore.wait()
         guard !accessToken.isEmpty else {
             throw tokenProviderError
+        }
+    }
+}
+
+extension ServiceAccountCredentials {
+    static func encodeJSON() throws -> Data {
+        do {
+            let credentials = Constant.OAuth.Credentials.self
+            let serviceAccount = ServiceAccountCredentials(
+                CredentialType: credentials.type,
+                ProjectId: credentials.projectId,
+                PrivateKeyId: credentials.privateKeyId,
+                PrivateKey: credentials.privateKey,
+                ClientEmail: credentials.clientEmail,
+                ClientID: credentials.clientID,
+                AuthURI: credentials.authURI,
+                TokenURI: credentials.tokenURI,
+                AuthProviderX509CertURL: credentials.authProviderX509CertURL,
+                ClientX509CertURL: credentials.clientX509CertURL
+            )
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            return try encoder.encode(serviceAccount)
+        } catch {
+            throw CredentialsError(reason: .parseCredentialsData)
         }
     }
 }

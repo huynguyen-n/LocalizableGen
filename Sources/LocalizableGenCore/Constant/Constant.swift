@@ -42,6 +42,8 @@ struct Constant {
         static let scopes: [String] = [ "https://spreadsheets.google.com/feeds",
                                         "https://www.googleapis.com/auth/drive" ]
         struct Credentials {
+            static let fileName = "localizable-generator-2195c5a58627.json"
+
             static let type: String = "service_account"
             static let projectId: String = "localizable-generator"
             static let privateKeyId: String = "2195c5a5862763d802a0878eeef50de5a579f645"

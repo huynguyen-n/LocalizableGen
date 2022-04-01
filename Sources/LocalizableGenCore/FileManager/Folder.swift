@@ -28,6 +28,10 @@ extension Folder {
         return FileManager.default.currentDirectoryPath
     }
 
+    static let temporaryDirectory: String = NSTemporaryDirectory()
+
+    static let credentialsFilePath: String = temporaryDirectory.appending(Constant.OAuth.Credentials.fileName)
+
     @discardableResult
     func createFile(named fileName: String, contents: Data? = nil) throws -> File {
         return try storage.createFile(at: fileName, contents: contents)
