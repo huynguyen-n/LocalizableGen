@@ -80,7 +80,7 @@ class GoogleOAuth {
     }
 
     func connect() throws {
-        guard let provider = DefaultTokenProvider(scopes: Constant.OAuth.scopes) else {
+        guard let provider = DefaultTokenProvider(scopes: Constant.OAuth.scopes, path: Folder.credentialsFilePath) else {
             throw TokenProviderError(reason: .defaultTokenProvider)
         }
         let semaphore = DispatchSemaphore(value: 0)

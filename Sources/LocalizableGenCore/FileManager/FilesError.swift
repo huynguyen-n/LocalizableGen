@@ -30,6 +30,10 @@ extension FilesError: CustomStringConvertible {
 enum LocationErrorReason {
     case missing
     case emptyFilePath
+    case unresolvedSearchPath(
+        FileManager.SearchPathDirectory,
+        domain: FileManager.SearchPathDomainMask
+    )
 }
 
 enum WriteErrorReason {
