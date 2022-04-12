@@ -10,13 +10,45 @@ import Foundation
 enum Platform {
     case iOS
     case Android
+
+    var value: String {
+        switch self {
+        case .iOS:
+            return "iOS"
+        case .Android:
+            return "Android"
+        }
+    }
+
+    func dirExtension(_ language: String) -> String {
+        let constant = Constant.LocaliableFile.self
+        switch self {
+        case .iOS:
+            let languageIfYes = language.isEmpty ? constant.iOS.BaseLanguage : language
+            return languageIfYes + constant.iOS.DirExtension
+        case .Android:
+            let languageIfYes = language.isEmpty ? "" : "-" + language
+            return constant.Android.DirExtension + languageIfYes
+        }
+    }
+
+    func localizableStringFormat(key: String, value: String) -> String {
+        switch self {
+        case .iOS:
+            return "\"\(key)\" = \"\(value)\";\n\n"
+        case .Android:
+            return "<string name=\"\(key.toAndroid())\">\(value)</string>\n\n"
+        }
+    }
 }
 
 struct Constant {
 
     struct App {
-        static let targetName = ProcessInfo.processInfo.environment["TARGET_NAME"] ?? ""
-        static let credentialKey = "GOOGLE_APPLICATION_CREDENTIALS"
+
+        static let BaseURL: String = "https://sheets.googleapis.com/v4"
+
+        static let TargetName = "LocalizableGen"
 
         struct Message {
 
@@ -25,16 +57,25 @@ struct Constant {
         }
     }
 
+    // MARK: LocalizableGen
+    struct APIEndPoint {
+
+        static let SpreadSheet = "/spreadsheets"
+
+    }
+
     struct LocaliableFile {
 
         struct iOS {
 
-            static let dirExtension = "lproj"
-            static let name = "Localizable.strings"
+            static let BaseLanguage = "Base"
+            static let DirExtension = ".lproj"
+            static let Name = "Localizable.strings"
         }
 
         struct Android {
-            static let name = "strings.xml"
+            static let DirExtension = "values"
+            static let Name = "strings.xml"
         }
     }
 

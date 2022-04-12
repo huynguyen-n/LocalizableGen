@@ -45,10 +45,10 @@ extension Location {
 }
 
 final class Storage<LocationType: Location> {
-    fileprivate private(set) var path: String
+    private(set) var path: String
     private let fileManager: FileManager
 
-    fileprivate init(path: String, fileManager: FileManager) throws {
+    init(path: String, fileManager: FileManager) throws {
         self.path = path
         self.fileManager = fileManager
     }
@@ -65,6 +65,27 @@ extension Storage {
 }
 
 extension Storage where LocationType == Folder {
+
+    func createSubfolder(at folderPath: String) throws -> Folder {
+        let folderPath = path + folderPath.removingPrefix("/")
+
+        guard folderPath != path else {
+            throw WriteError(path: folderPath, reason: .emptyPath)
+        }
+
+        do {
+            try fileManager.createDirectory(
+                atPath: folderPath,
+                withIntermediateDirectories: true
+            )
+
+            let storage = try Storage(path: folderPath, fileManager: fileManager)
+            return Folder(storage: storage)
+        } catch {
+            throw WriteError(path: folderPath, reason: .folderCreationFailed(error))
+        }
+    }
+
     func createFile(at filePath: String, contents: Data?) throws -> File {
         let filePath = path + filePath.removingPrefix("/")
 
@@ -91,21 +112,3 @@ extension Storage where LocationType == Folder {
         return File(storage: storage)
     }
 }
-
-private extension String {
-    func removingPrefix(_ prefix: String) -> String {
-        guard hasPrefix(prefix) else { return self }
-        return String(dropFirst(prefix.count))
-    }
-
-    func removingSuffix(_ suffix: String) -> String {
-        guard hasSuffix(suffix) else { return self }
-        return String(dropLast(suffix.count))
-    }
-
-    func appendingSuffixIfNeeded(_ suffix: String) -> String {
-        guard !hasSuffix(suffix) else { return self }
-        return appending(suffix)
-    }
-}
-
