@@ -33,7 +33,10 @@ extension Request {
             semaphore.signal()
         }
 
-        let request = self.buildURLRequest()
+        guard let request = self.buildURLRequest() else {
+            onError(.invalidURL(url: urlComponents.url))
+            return
+        }
 
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard error == nil else {
@@ -42,7 +45,7 @@ extension Request {
             }
             
             guard let data = data else {
-                onError(.nilData)
+                onError(.nilData(urlRequest: request))
                 return
             }
 
@@ -57,15 +60,18 @@ extension Request {
         semaphore.wait()
     }
     
-    private func buildURLRequest() -> URLRequest {
+    private func buildURLRequest() -> URLRequest? {
 
         // Build URL with query items
         var finalURLComponents = urlComponents
         if let queryItem = queryItem {
             finalURLComponents.queryItems?.append(contentsOf: queryItem.toArray())
         }
+        guard let url = finalURLComponents.url else {
+            return nil
+        }
 
-        var urlRequest = URLRequest(url: finalURLComponents.url!)
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = self.httpMethod.rawValue
         urlRequest.timeoutInterval = TimeInterval(10 * 1000)
 

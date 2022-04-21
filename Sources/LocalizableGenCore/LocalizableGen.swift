@@ -74,7 +74,7 @@ public struct LocalizableGen: ParsableCommand {
         let range = Range(sheetName: "All", cells: .init(column: "A1"))
         let sheet = Sheet(range: range, majorDimension: .columns)
         let queryItem = GetSpreadSheetRequestQueryItem(spreadSheetId: "1IihX1NXGX98A6MrliAN1pYrxIGhAMWu-BkfgqMco8Pc", sheet: sheet)
-        GetSpreadSheetRequest(queryItem: queryItem).excute(onSuccess: { results in
+        GetSpreadSheetRequest(queryItem: queryItem).excute { results in
             Log.message("Success get data")
 //            let values = results.valueRanges.first().values
 //            let csvDictionary = values.toDictionary(with: 1)
@@ -86,37 +86,14 @@ public struct LocalizableGen: ParsableCommand {
 //            let generatorAndroid = AndroidFileGenerator(localizableFile: localizableFile)
 //            generatoriOS.writeToFile()
 //            generatorAndroid.writeToFile()
-        }, onError: { error in
-            switch error {
-            case .invalidURL:
-                break
-            case .nilData:
-                break
-            case .parseJSON(let data):
-                Log.message(data, to: .error)
-            case .error(let error):
-                break
-            }
-        })
+        } onError: { $0.logMessage() }
     }
 
     private func updateSpreadSheet(_ sheet: Sheet) {
         let param = UpdateSpreadSheetParam(spreadSheetId: "", valueInputOption: .raw, data: [sheet])
         UpdateSpreadSheetRequest(param).excute { _ in
 
-        } onError: { error in
-            Log.message("Error when update spread sheet")
-            switch error {
-            case .invalidURL:
-                break
-            case .nilData:
-                break
-            case .parseJSON(let data):
-                Log.message(data, to: .error)
-            case .error(let error):
-                break
-            }
-        }
+        } onError: { $0.logMessage() }
     }
 
     static func getEmailInfo() -> String {
