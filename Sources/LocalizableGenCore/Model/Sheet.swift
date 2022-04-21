@@ -9,15 +9,36 @@ import Foundation
 
 public typealias SheetValues = [[String]]
 
-public struct Sheet: Codable {
-    public private(set) var range: String
-    public private(set) var majorDimension: String
+public struct Sheet: Decodable {
+    public private(set) var range: Range
+    public private(set) var majorDimension: Dimension
     public private(set) var values: SheetValues
 
-    public init(range: String, majorDimension: String, values: SheetValues) {
+    public init(range: Range, majorDimension: Dimension, values: SheetValues) {
         self.range = range
         self.majorDimension = majorDimension
         self.values = values
+    }
+
+    public init(range: Range, majorDimension: Dimension) {
+        self.range = range
+        self.majorDimension = majorDimension
+        self.values = []
+    }
+
+    enum CodingKeys : String, CodingKey {
+        case range
+        case majorDimension
+        case values
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        values = try container.decode(SheetValues.self, forKey: .values)
+        let majorDimensionString = try container.decode(String.self, forKey: .majorDimension)
+        majorDimension = Dimension(value: majorDimensionString) ?? .dimensionUnspecified
+        let rangeString = try container.decode(String.self, forKey: .range)
+        range = Range(stringValue: rangeString)
     }
 }
 
@@ -40,16 +61,9 @@ extension SheetValues {
         languages.removeFirst() // as key of language: like en or vn...
         return Dictionary(keys: self.keys, values: languages)
     }
-}
 
-extension Dictionary {
-    public init(keys: [Key], values: [Value]) {
-        precondition(keys.count == values.count)
-
-        self.init()
-
-        for (index, key) in keys.enumerated() {
-            self[key] = values[index]
-        }
+    var language: String {
+        let lang = self.last?.first?.components(separatedBy: " - ")
+        return String(lang?.last ?? "")
     }
 }

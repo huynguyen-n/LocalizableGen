@@ -20,14 +20,3 @@ public struct LocalizableFile {
     public private(set) var language: String
     public private(set) var data: CSVDictionaryFormat
 }
-
-extension CSVDictionaryFormat {
-    func toCSVString(for platform: Platform) -> String {
-        var csvString = ""
-        self.forEach {
-            csvString += "/* \($1) */\n"
-            csvString += "\(platform.localizableStringFormat(key: $0, value: $1))"
-        }
-        return csvString
-    }
-}

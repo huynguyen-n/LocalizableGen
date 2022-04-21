@@ -9,7 +9,6 @@ import Foundation
 
 //  MARK:- Define Request Entities
 
-public typealias Parameters = [String: Any?]?
 public typealias HeaderParameter = [String: String]
 
 enum RequestError: Swift.Error {
@@ -26,22 +25,22 @@ enum HTTPMethod: String {
 
 //  MARK:- Main Request Features
 protocol Request {
-    
-    associatedtype CodableResponse: Codable
-    
+
+    associatedtype Element
+
     var basePath: String { get }
-    
+
     var endpoint: String { get }
-    
+
     var httpMethod: HTTPMethod { get }
-    
-    var param: Parameters? { get }
+
+    var param: Parameter? { get }
 
     var semaphore: DispatchSemaphore { get }
 
-    var queryItems: [URLQueryItem]? { get }
-    
-    func decode(data: Data) -> CodableResponse?
+    var queryItem: QueryItem? { get }
+
+    func decode(data: Data) -> Element?
 }
 
 

@@ -13,25 +13,35 @@ extension Request {
     
     var param: Parameter? { return nil }
     
-    var addionalHeader: HeaderParameter? { return nil }
-    
-    var defaultHeader: HeaderParameter { return ["Accept": "application/json", "Accept-Language": "en_US"] }
+    var addionalHeader: HeaderParameter? { return ["Content-Type": "application/json", "Accept-Language": "en_US"] }
     
     var urlPath: String { return basePath + endpoint }
-    
+
+    var queryItem: QueryItem? { return nil }
+
+    var defaultQueryItems: [URLQueryItem] {
+        return [
+            URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)
+        ]
+    }
+
     var url: URL {
-        let url = URL(string: urlPath)!
-        if let queryItems = self.queryItems {
-            var urlComponent = URLComponents(string: urlPath)
-            urlComponent?.queryItems = queryItems
-            return urlComponent?.url ?? url
+        let defaultURL = URL(string: urlPath)!
+        guard let urlComponentUnwrapped = URLComponents(string: urlPath) else {
+            return defaultURL
         }
-        return url
+        var urlComponent = urlComponentUnwrapped
+        var finalQueryItems = defaultQueryItems
+        if let queryItemsUnwrapped = queryItem {
+            finalQueryItems.append(contentsOf: queryItemsUnwrapped.toArrayURLQueryItem())
+        }
+        urlComponent.queryItems = finalQueryItems
+        return urlComponent.url ?? defaultURL
     }
 
     var semaphore: DispatchSemaphore { return .init(value: 0) }
     
-    func excute(onSuccess: @escaping (CodableResponse) -> Void, onError: @escaping (RequestError) -> Void) {
+    func excute(onSuccess: @escaping (Element) -> Void, onError: @escaping (RequestError) -> Void) {
 
         defer {
             semaphore.signal()
@@ -66,13 +76,14 @@ extension Request {
         var urlRequest = URLRequest(url: self.url)
         urlRequest.httpMethod = self.httpMethod.rawValue
         urlRequest.timeoutInterval = TimeInterval(10 * 1000)
-        
+
         // Encode param
-        do {
-            if let params = self.param {
-                urlRequest.httpBody = try JSONSerialization.data(withJSONObject: params!, options: [])
-            }
-        } catch { return urlRequest }
+        if let params = self.param {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: params.toDictionary(), options: [])
+                urlRequest.httpBody = jsonData
+            } catch { return urlRequest }
+        }
         
         // Add addional Header if need
         if let additinalHeaders = self.addionalHeader {

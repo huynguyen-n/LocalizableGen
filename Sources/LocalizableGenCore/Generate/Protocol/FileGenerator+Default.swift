@@ -29,23 +29,13 @@ extension FileGenerator {
         return "\(module)/\(platform.value)/\(languageDirectoryExtention)/"
     }
 
-    var textMacroHeader: String {
-        let byUser = NSFullUserName()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMM d, yyyy 'at' HH:mm:ss"
-        let byDate = dateFormatter.string(from: Date())
-        return """
-            //
-            //  \(fileName)
-            //  \(localizableFile.module)
-            //
-            //  Created by \(byUser) on \(byDate).
-            //\n\n\n
-            """
-    }
-
     var csvDictionaryString: String {
-        return localizableFile.data.toCSVString(for: platform)
+        switch platform {
+        case .iOS:
+            return iOSString()
+        case .Android:
+            return androidString()
+        }
     }
 
     func writeToFile() {
@@ -64,5 +54,24 @@ extension FileGenerator {
         } catch {
             Log.message(error.localizedDescription, to: .error)
         }
+    }
+
+    private func androidString() -> String {
+        var csvString = "<resources>\n\n"
+        localizableFile.data.forEach {
+            csvString += "\t/* \($1) */\n"
+            csvString += "\t\(platform.localizableStringFormat(key: $0, value: $1))"
+        }
+        csvString += "</resources>"
+        return csvString
+    }
+
+    private func iOSString() -> String {
+        var csvString = ""
+        localizableFile.data.forEach {
+            csvString += "/* \($1) */\n"
+            csvString += "\(platform.localizableStringFormat(key: $0, value: $1))"
+        }
+        return csvString
     }
 }

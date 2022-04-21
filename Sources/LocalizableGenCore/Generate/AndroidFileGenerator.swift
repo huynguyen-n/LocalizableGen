@@ -17,4 +17,19 @@ struct AndroidFileGenerator: FileGenerator {
     init(localizableFile: LocalizableFile) {
         self.localizableFile = localizableFile
     }
+
+    var textMacroHeader: String {
+        let byUser = NSFullUserName()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d, yyyy 'at' HH:mm:ss"
+        let byDate = dateFormatter.string(from: Date())
+        return """
+            <!--
+            //  \(fileName)
+            //  \(localizableFile.module)
+            //
+            //  Created by \(byUser) on \(byDate).
+            -->\n\n\n
+            """
+    }
 }
