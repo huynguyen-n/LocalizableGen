@@ -19,24 +19,10 @@ extension Request {
 
     var queryItem: QueryItem? { return nil }
 
-    var defaultQueryItems: [URLQueryItem] {
-        return [
-            URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)
-        ]
-    }
-
-    var url: URL {
-        let defaultURL = URL(string: urlPath)!
-        guard let urlComponentUnwrapped = URLComponents(string: urlPath) else {
-            return defaultURL
-        }
-        var urlComponent = urlComponentUnwrapped
-        var finalQueryItems = defaultQueryItems
-        if let queryItemsUnwrapped = queryItem {
-            finalQueryItems.append(contentsOf: queryItemsUnwrapped.toArrayURLQueryItem())
-        }
-        urlComponent.queryItems = finalQueryItems
-        return urlComponent.url ?? defaultURL
+    var urlComponents: URLComponents {
+        var urlComponents = URLComponents(string: urlPath)!
+        urlComponents.queryItems = [URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)]
+        return urlComponents
     }
 
     var semaphore: DispatchSemaphore { return .init(value: 0) }
@@ -72,8 +58,14 @@ extension Request {
     }
     
     private func buildURLRequest() -> URLRequest {
-        
-        var urlRequest = URLRequest(url: self.url)
+
+        // Build URL with query items
+        var finalURLComponents = urlComponents
+        if let queryItem = queryItem {
+            finalURLComponents.queryItems?.append(contentsOf: queryItem.toArray())
+        }
+
+        var urlRequest = URLRequest(url: finalURLComponents.url!)
         urlRequest.httpMethod = self.httpMethod.rawValue
         urlRequest.timeoutInterval = TimeInterval(10 * 1000)
 

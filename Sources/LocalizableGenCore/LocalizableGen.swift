@@ -20,7 +20,7 @@ public struct LocalizableGen: ParsableCommand {
         try? GoogleOAuth.share.connect()
 //        readLocalizableConfig(path: "/Users/huy/Desktop/LocalizedStringsGenerator.json")
 //        readLocalizableFile(path: "/Users/huy/RedAirship/iOS/frank-ios/Frank/")
-//        getAndGenFileFromSpreadSheet()
+        getAndGenFileFromSpreadSheet()
     }
 
     private func readLocalizableConfig(path: String) {
@@ -73,18 +73,19 @@ public struct LocalizableGen: ParsableCommand {
     private func getAndGenFileFromSpreadSheet() {
         let range = Range(sheetName: "All", cells: .init(column: "A1"))
         let sheet = Sheet(range: range, majorDimension: .columns)
-        let queryItem = SpreadSheetRequestQueryItem(spreadSheetId: "1IihX1NXGX98A6MrliAN1pYrxIGhAMWu-BkfgqMco8Pc", sheet: sheet)
-        SpreadSheetRequest(queryItem: queryItem).excute(onSuccess: { results in
-            let values = results.valueRanges.first().values
-            let csvDictionary = values.toDictionary(with: 1)
-            let localizableFile = LocalizableFile(module: range.sheetName,
-                                                  language: values.language,
-                                                  data: csvDictionary)
-
-            let generatoriOS = iOSFileGenerator(localizableFile: localizableFile)
-            let generatorAndroid = AndroidFileGenerator(localizableFile: localizableFile)
-            generatoriOS.writeToFile()
-            generatorAndroid.writeToFile()
+        let queryItem = GetSpreadSheetRequestQueryItem(spreadSheetId: "1IihX1NXGX98A6MrliAN1pYrxIGhAMWu-BkfgqMco8Pc", sheet: sheet)
+        GetSpreadSheetRequest(queryItem: queryItem).excute(onSuccess: { results in
+            Log.message("Success get data")
+//            let values = results.valueRanges.first().values
+//            let csvDictionary = values.toDictionary(with: 1)
+//            let localizableFile = LocalizableFile(module: range.sheetName,
+//                                                  language: values.language,
+//                                                  data: csvDictionary)
+//
+//            let generatoriOS = iOSFileGenerator(localizableFile: localizableFile)
+//            let generatorAndroid = AndroidFileGenerator(localizableFile: localizableFile)
+//            generatoriOS.writeToFile()
+//            generatorAndroid.writeToFile()
         }, onError: { error in
             switch error {
             case .invalidURL:

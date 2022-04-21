@@ -10,5 +10,5 @@ import Foundation
 // MARK: - Generic query items
 public protocol QueryItem {
 
-    func toArrayURLQueryItem() -> [URLQueryItem]
+    func toArray() -> [URLQueryItem]
 }
