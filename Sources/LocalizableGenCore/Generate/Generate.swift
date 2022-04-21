@@ -44,19 +44,19 @@ struct Generate: ParsableCommand {
     }
 
     private func getSpreadSheet() {
-        SpreadSheetRequest(spreadSheetId: "1IihX1NXGX98A6MrliAN1pYrxIGhAMWu-BkfgqMco8Pc").excute(onSuccess: { results in
-            print(results.valueRanges.first().values.toDictionary(with: 1))
-        }, onError: { error in
-            switch error {
-            case .invalidURL:
-                break
-            case .nilData:
-                break
-            case .parseJSON(let data):
-                Log.message(data, to: .error)
-            case .error(let error):
-                break
-            }
-        })
+//        SpreadSheetRequest(spreadSheetId: "1IihX1NXGX98A6MrliAN1pYrxIGhAMWu-BkfgqMco8Pc").excute(onSuccess: { results in
+//            print(results.valueRanges.first().values.toDictionary(with: 1))
+//        }, onError: { error in
+//            switch error {
+//            case .invalidURL:
+//                break
+//            case .nilData:
+//                break
+//            case .parseJSON(let data):
+//                Log.message(data, to: .error)
+//            case .error(let error):
+//                break
+//            }
+//        })
     }
 }

@@ -66,6 +66,15 @@ extension Storage {
 
 extension Storage where LocationType == Folder {
 
+    func makeChildSequence<T: Location>() -> Folder.ChildSequence<T> {
+        return Folder.ChildSequence(
+            folder: Folder(storage: self),
+            fileManager: fileManager,
+            isRecursive: false,
+            includeHidden: false
+        )
+    }
+
     func createSubfolder(at folderPath: String) throws -> Folder {
         let folderPath = path + folderPath.removingPrefix("/")
 
@@ -110,5 +119,18 @@ extension Storage where LocationType == Folder {
         }
 
         return File(storage: storage)
+    }
+}
+
+extension Folder.ChildSequence {
+    var first: Child? {
+        var iterator = makeIterator()
+        return iterator.next()
+    }
+
+    var recursive: Folder.ChildSequence<Child> {
+        var sequence = self
+        sequence.isRecursive = true
+        return sequence
     }
 }

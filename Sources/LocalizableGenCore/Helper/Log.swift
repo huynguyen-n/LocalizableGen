@@ -36,6 +36,8 @@ enum Log {
             let JSONObjData = try JSONSerialization.data(withJSONObject: JSONObj, options: .prettyPrinted)
             let JSONStr = String(data: JSONObjData, encoding: .utf8) ?? ""
             message(JSONStr, to: to)
-        } catch { }
+        } catch {
+            Log.message(error.localizedDescription)
+        }
     }
 }

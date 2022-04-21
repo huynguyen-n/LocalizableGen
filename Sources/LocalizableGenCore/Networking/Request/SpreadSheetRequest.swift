@@ -7,40 +7,48 @@
 
 import Foundation
 
-struct SpreadSheetRequest: Request {
-    public private(set) var spreadSheetId: String
-    public private(set) var sheetName: String
-
-    init(spreadSheetId: String, sheetName: String = "") {
+public struct SpreadSheetRequestQueryItem: QueryItem {
+    public init(spreadSheetId: String, sheet: Sheet) {
         self.spreadSheetId = spreadSheetId
-        self.sheetName = sheetName
+        self.sheet = sheet
+    }
+
+    public private(set) var spreadSheetId: String
+    public private(set) var sheet: Sheet
+
+    public func toArrayURLQueryItem() -> [URLQueryItem] {
+        return [
+            URLQueryItem(name: "ranges", value: sheet.range.value),
+            URLQueryItem(name: "majorDimension", value: sheet.majorDimension.value)
+        ]
+    }
+}
+
+final class SpreadSheetRequest: Request {
+
+    public private(set) var _queryItem: SpreadSheetRequestQueryItem
+
+    init(queryItem: SpreadSheetRequestQueryItem) {
+        self._queryItem = queryItem
     }
 
     func decode(data: Data) -> Spreadsheet? {
         do {
-            let result = try JSONDecoder().decode(CodableResponse.self, from: data)
+            let result = try JSONDecoder().decode(Element.self, from: data)
 
             return result
 
         } catch { return nil }
     }
 
-    typealias CodableResponse = Spreadsheet
+    typealias Element = Spreadsheet
 
-    var param: Parameters? {
-        return nil
-    }
-
-    var queryItems: [URLQueryItem]? {
-        return [
-            URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken),
-            URLQueryItem(name: "ranges", value: "\(sheetName.isEmpty ? "" : sheetName + "!")A1:Z"),
-            URLQueryItem(name: "majorDimension", value: "COLUMNS")
-        ]
+    var queryItem: QueryItem? {
+        return self._queryItem
     }
 
     var endpoint: String {
-        return Constant.APIEndPoint.SpreadSheet + "/\(spreadSheetId)/values:batchGet"
+        return Constant.APIEndPoint.SpreadSheet + "/\(_queryItem.spreadSheetId)/values:batchGet"
     }
 
     var httpMethod: HTTPMethod {
