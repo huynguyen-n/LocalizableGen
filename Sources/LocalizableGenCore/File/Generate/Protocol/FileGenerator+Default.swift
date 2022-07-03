@@ -46,6 +46,9 @@ extension FileGenerator {
 
             var str = textMacroHeader
             str += csvDictionaryString
+            if Log.isVerbose {
+                Log.message("Write \(str) into localizable file")
+            }
             try file.write(str)
         } catch let locationErr as LocationError {
             Log.message(locationErr.description, to: .error)

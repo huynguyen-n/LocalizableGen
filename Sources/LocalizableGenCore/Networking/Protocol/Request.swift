@@ -77,8 +77,6 @@ protocol Request {
 
     var param: Parameter? { get }
 
-    var semaphore: DispatchSemaphore { get }
-
     var queryItem: QueryItem? { get }
 
     func decode(data: Data) -> Element?

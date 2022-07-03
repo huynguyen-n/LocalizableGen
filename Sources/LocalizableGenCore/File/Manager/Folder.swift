@@ -178,6 +178,17 @@ extension Folder {
             fileManager: fileManager
         ))
     }
+
+    @discardableResult
+    func subFolderFilter(_ element: String) throws -> [File] {
+        var files: [File] = []
+        subfolders
+            .filter { $0.url.lastPathComponent.contains(element) }
+            .forEach {
+                files = Array($0.files)
+            }
+        return files
+    }
 }
 
 extension URL {

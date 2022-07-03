@@ -24,21 +24,20 @@ extension Request {
         urlComponents.queryItems = [URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)]
         return urlComponents
     }
-
-    var semaphore: DispatchSemaphore { return .init(value: 0) }
     
     func excute(onSuccess: @escaping (Element) -> Void, onError: @escaping (RequestError) -> Void) {
 
-        defer {
-            semaphore.signal()
-        }
-
+        let semaphore = DispatchSemaphore(value: 0)
         guard let request = self.buildURLRequest() else {
             onError(.invalidURL(url: urlComponents.url))
             return
         }
 
         URLSession.shared.dataTask(with: request) { (data, response, error) in
+            defer {
+                semaphore.signal()
+            }
+
             guard error == nil else {
                 onError(.error(error: error))
                 return
