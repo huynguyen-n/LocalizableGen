@@ -44,6 +44,11 @@ enum WriteErrorReason {
     case stringEncodingFailed(String)
 }
 
+enum ReadErrorReason {
+    case canNotReadData
+}
+
 
 typealias LocationError = FilesError<LocationErrorReason>
 typealias WriteError = FilesError<WriteErrorReason>
+typealias ReadError = FilesError<ReadErrorReason>

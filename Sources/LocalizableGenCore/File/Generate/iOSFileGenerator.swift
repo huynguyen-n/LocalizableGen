@@ -24,12 +24,11 @@ struct iOSFileGenerator: FileGenerator {
         dateFormatter.dateFormat = "MMM d, yyyy 'at' HH:mm:ss"
         let byDate = dateFormatter.string(from: Date())
         return """
-            //
-            //  \(fileName)
-            //  \(localizableFile.module)
-            //
-            //  Created by \(byUser) on \(byDate).
-            //\n\n\n
+            /*
+             Created by: \(byUser)
+             Source : \(localizableFile.module)
+             Created on: \(byDate)
+            */\n\n\n
             """
     }
 }

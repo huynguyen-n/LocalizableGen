@@ -54,4 +54,18 @@ extension File {
 
         return try append(data)
     }
+
+    func decode<T: Decodable>(of type: T.Type) throws -> T {
+        do {
+            let data = try Data(contentsOf: self.url)
+            let result = try JSONDecoder().decode(T.self, from: data)
+            return result
+        } catch {
+            throw ReadError(path: path, reason: .canNotReadData)
+        }
+    }
+
+    var data: Data? {
+        return try? Data(contentsOf: self.url)
+    }
 }

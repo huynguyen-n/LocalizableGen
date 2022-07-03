@@ -19,44 +19,32 @@ extension Request {
 
     var queryItem: QueryItem? { return nil }
 
-    var defaultQueryItems: [URLQueryItem] {
-        return [
-            URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)
-        ]
+    var urlComponents: URLComponents {
+        var urlComponents = URLComponents(string: urlPath)!
+        urlComponents.queryItems = [URLQueryItem(name: "access_token", value: GoogleOAuth.share.accessToken)]
+        return urlComponents
     }
-
-    var url: URL {
-        let defaultURL = URL(string: urlPath)!
-        guard let urlComponentUnwrapped = URLComponents(string: urlPath) else {
-            return defaultURL
-        }
-        var urlComponent = urlComponentUnwrapped
-        var finalQueryItems = defaultQueryItems
-        if let queryItemsUnwrapped = queryItem {
-            finalQueryItems.append(contentsOf: queryItemsUnwrapped.toArrayURLQueryItem())
-        }
-        urlComponent.queryItems = finalQueryItems
-        return urlComponent.url ?? defaultURL
-    }
-
-    var semaphore: DispatchSemaphore { return .init(value: 0) }
     
     func excute(onSuccess: @escaping (Element) -> Void, onError: @escaping (RequestError) -> Void) {
 
-        defer {
-            semaphore.signal()
+        let semaphore = DispatchSemaphore(value: 0)
+        guard let request = self.buildURLRequest() else {
+            onError(.invalidURL(url: urlComponents.url))
+            return
         }
 
-        let request = self.buildURLRequest()
-
         URLSession.shared.dataTask(with: request) { (data, response, error) in
+            defer {
+                semaphore.signal()
+            }
+
             guard error == nil else {
                 onError(.error(error: error))
                 return
             }
             
             guard let data = data else {
-                onError(.nilData)
+                onError(.nilData(urlRequest: request))
                 return
             }
 
@@ -71,9 +59,18 @@ extension Request {
         semaphore.wait()
     }
     
-    private func buildURLRequest() -> URLRequest {
-        
-        var urlRequest = URLRequest(url: self.url)
+    private func buildURLRequest() -> URLRequest? {
+
+        // Build URL with query items
+        var finalURLComponents = urlComponents
+        if let queryItem = queryItem {
+            finalURLComponents.queryItems?.append(contentsOf: queryItem.toArray())
+        }
+        guard let url = finalURLComponents.url else {
+            return nil
+        }
+
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = self.httpMethod.rawValue
         urlRequest.timeoutInterval = TimeInterval(10 * 1000)
 

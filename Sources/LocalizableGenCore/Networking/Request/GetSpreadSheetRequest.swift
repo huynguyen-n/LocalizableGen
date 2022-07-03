@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SpreadSheetRequestQueryItem: QueryItem {
+public struct GetSpreadSheetRequestQueryItem: QueryItem {
     public init(spreadSheetId: String, sheet: Sheet) {
         self.spreadSheetId = spreadSheetId
         self.sheet = sheet
@@ -16,7 +16,7 @@ public struct SpreadSheetRequestQueryItem: QueryItem {
     public private(set) var spreadSheetId: String
     public private(set) var sheet: Sheet
 
-    public func toArrayURLQueryItem() -> [URLQueryItem] {
+    public func toArray() -> [URLQueryItem] {
         return [
             URLQueryItem(name: "ranges", value: sheet.range.value),
             URLQueryItem(name: "majorDimension", value: sheet.majorDimension.value)
@@ -24,11 +24,11 @@ public struct SpreadSheetRequestQueryItem: QueryItem {
     }
 }
 
-final class SpreadSheetRequest: Request {
+final class GetSpreadSheetRequest: Request {
 
-    public private(set) var _queryItem: SpreadSheetRequestQueryItem
+    public private(set) var _queryItem: GetSpreadSheetRequestQueryItem
 
-    init(queryItem: SpreadSheetRequestQueryItem) {
+    init(queryItem: GetSpreadSheetRequestQueryItem) {
         self._queryItem = queryItem
     }
 

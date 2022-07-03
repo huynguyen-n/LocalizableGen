@@ -52,7 +52,7 @@ public struct UpdateSpreadSheetParam: Parameter {
 
 final class UpdateSpreadSheetRequest: Request {
 
-    typealias Element = Spreadsheet
+    typealias Element = UpdateSpreadsheet
 
     var endpoint: String {
         return Constant.APIEndPoint.SpreadSheet + "/\(self._param.spreadSheetId)/values:batchUpdate"
@@ -66,9 +66,13 @@ final class UpdateSpreadSheetRequest: Request {
         return self._param
     }
 
-    func decode(data: Data) -> Spreadsheet? {
-        Log.message(data)
-        return nil
+    func decode(data: Data) -> UpdateSpreadsheet? {
+        do {
+            let result = try JSONDecoder().decode(Element.self, from: data)
+
+            return result
+
+        } catch { return nil }
     }
 
     public private(set) var _param: UpdateSpreadSheetParam
