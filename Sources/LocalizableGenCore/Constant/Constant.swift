@@ -40,6 +40,17 @@ enum Platform {
             return "<string name=\"\(key.toAndroid())\">\(value)</string>\n\n"
         }
     }
+
+    init?(string: String) {
+        switch string.lowercased() {
+        case "ios":
+            self = .iOS
+        case "android":
+            self = .Android
+        default:
+            return nil
+        }
+    }
 }
 
 struct Constant {

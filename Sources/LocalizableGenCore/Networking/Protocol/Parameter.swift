@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Generic param
-protocol Parameter {
+public protocol Parameter {
     
     func toDictionary() -> [String: Any]
 }
