@@ -9,6 +9,7 @@ LocalizableGen will helps you working with `Localizable.strings`(iOS) and `strin
 - [x] Update the Spreadsheet from the files you already generated.
 
 ## Dependencies
+
 Thanks a lot to all of dependencies I have used in this project. If not, this tool can not be done. 🙏🙏🙏
 
 - [Auth Library for Swift](https://github.com/googleapis/google-auth-library-swift)
@@ -35,6 +36,7 @@ https://user-images.githubusercontent.com/21701724/178128774-e6437a9e-9ae1-41f9-
 <img width="1606" alt="Screen Shot 2022-07-10 at 08 59 57" src="https://user-images.githubusercontent.com/21701724/178128595-d1a1be18-5bde-4f4e-904d-fdb20cbde245.png">
 
 ## Usage
+
 ```
 $ localizable-gen --help
 OVERVIEW: A Swift command-line tool to generate localizable from Google
@@ -58,6 +60,7 @@ $ mint install huynguyen-n/LocalizableGen
 ```
 
 ## Development
+
 - Clone this repo
 - Open Xcode by `Package.swift` file.
 
