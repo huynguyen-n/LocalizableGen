@@ -12,7 +12,7 @@ import ColorizeSwift
 public struct LocalizableGen: ParsableCommand {
 
     public static var configuration = CommandConfiguration(
-        abstract: Constant.App.Message.intro + connectGoogleOAuth(),
+        abstract: Constant.App.Message.intro + Constant.App.Message.email + connectGoogleOAuth(),
         subcommands: [
             Generate.self,
             Update.self
@@ -25,7 +25,7 @@ public struct LocalizableGen: ParsableCommand {
         do {
             try GoogleOAuth.share.connect()
             let clientMail = try GoogleOAuth.share.getCredentialEmail()
-            return clientMail.green()
+            return clientMail.underline()
         } catch let tokenProviderErr as TokenProviderError {
             return tokenProviderErr.description.red()
         } catch {

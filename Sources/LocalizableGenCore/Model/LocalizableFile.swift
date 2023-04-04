@@ -9,6 +9,17 @@ import Foundation
 
 public typealias CSVDictionaryFormat = Dictionary<String, String>
 
+extension CSVDictionaryFormat {
+    func print() {
+        for (key, value) in self {
+            let string = """
+                    "\(key)": "\(value)";
+                    """
+            Log.message(string)
+        }
+    }
+}
+
 public struct LocalizableFile {
     public init(module: String, language: String, data: CSVDictionaryFormat) {
         self.module = module
