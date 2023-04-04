@@ -7,6 +7,7 @@
 
 import Foundation
 import ArgumentParser
+import SWXMLHash
 
 struct Update: ParsableCommand, LocalizableConfigFilePr {
     public static let configuration = CommandConfiguration(abstract: "Update current localizable file to your Spreadsheet.")
@@ -26,7 +27,6 @@ struct Update: ParsableCommand, LocalizableConfigFilePr {
 
     func run() throws {
         Log.isVerbose = verbose
-
         do {
             try update(try file())
         } catch let locationError as LocationError {
@@ -38,11 +38,9 @@ struct Update: ParsableCommand, LocalizableConfigFilePr {
 
     private func update(_ file: LocalizableConfigFile) throws {
         do {
-            try Folder(path: file.stringResourceFolderPath)
-                .subFolderFilter(Constant.LocaliableFile.iOS.DirExtension)
-                .forEach {
-                    try updateSpreadsheet($0, configFile: file)
-                }
+            try Folder(path: file.stringResourceFolderPath).files.forEach {
+                try updateSpreadsheet($0, configFile: file)
+            }
         } catch {
             Log.message("Error to read Folder", to: .error)
         }
@@ -50,10 +48,10 @@ struct Update: ParsableCommand, LocalizableConfigFilePr {
 
     private func updateSpreadsheet(_ file: File, configFile: LocalizableConfigFile) throws {
         do {
-            guard let data = file.data else {
+            guard let data = file.data, let platform = Platform(string: configFile.platform) else {
                 throw ReadError(path: file.path, reason: .canNotReadData)
             }
-            let dict = try PropertyListDecoder().decode([String: String].self, from: data)
+            let dict = try platform.buildDictionary(data)
             let sheet = Sheet(
                 range: .init(sheetName: configFile.primaryGoogleSheetName, cells: .init(column: "A2", row: "B")),
                 majorDimension: .columns,
@@ -67,4 +65,18 @@ struct Update: ParsableCommand, LocalizableConfigFilePr {
             throw error
         }
     }
+
+    private func buildDictionary(_ data: Data) -> CSVDictionaryFormat {
+        let xml = XMLHash.lazy(data)
+        var dict: CSVDictionaryFormat = [:]
+        for stringEle in xml["resources"]["string"].all {
+            guard let key = stringEle.element?.attribute(by: "name")?.text,
+                  let value = stringEle.element?.text else {
+                continue
+            }
+            dict[key] = value
+        }
+        return dict
+    }
 }
+
