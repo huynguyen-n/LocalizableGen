@@ -1,16 +1,30 @@
 # LocalizableGen
-A Swift command-line tool works with localizable file from Google Sheet. An easy way to help BA, PO and Designer or non-tech will interact to the app without less involved from Developers.
+The tool takes a lot of inspiration from [Poes](https://github.com/AvdLee/Poes).
 
-LocalizableGen helps you with:
+A Swift command-line tool works with localizable file from Google Sheet. An easy way to help Business Analytics, Product Owner, Designer or non-tech will interact to the app with less involved from Developers.
 
-- [x] Generate `Localizable.strings` and `strings.xml` from Spreadsheet.
-- [x] Update the localizable file to Spreadsheet.
+LocalizableGen will helps you working with `Localizable.strings`(iOS) and `strings.xml`(Android):
 
-### Requirements
+- [x] Generate that files from Spreadsheet for each languages you selected.
+- [x] Update the Spreadsheet from the files you already generated.
+
+## Dependencies
+
+Thanks a lot to all of dependencies I have used in this project. If not, this tool can not be done. 🙏🙏🙏
+
+- [Auth Library for Swift](https://github.com/googleapis/google-auth-library-swift)
+- [Swift Argument Parser](https://github.com/apple/swift-argument-parser)
+- [SWXMLHash](https://github.com/drmohundro/SWXMLHash.git)
+- [ColorizeSwift](https://github.com/mtynior/ColorizeSwift.git)
+
+## Requirements
+
 - Xcode 13 or above
 - Log in to Google Sheet and make copy from [Template](https://docs.google.com/spreadsheets/d/1C2L-fsw-MiAyXdjzYl867UZfyjHFPpA5STBi88M26oo)
+- Give the access from this email localizable-gen-service-accoun@localizable-generator.iam.gserviceaccount.com to your Spreadsheet.
 
-### Setup Google Sheet
+## Setup Google Sheet
+
 - Template have two sheets: ISO-639 and the base sheet template which include keys and values for each languages.
 
 https://user-images.githubusercontent.com/21701724/178128774-e6437a9e-9ae1-41f9-ac7a-17bd89f28c52.mov
@@ -21,7 +35,8 @@ https://user-images.githubusercontent.com/21701724/178128774-e6437a9e-9ae1-41f9-
 
 <img width="1606" alt="Screen Shot 2022-07-10 at 08 59 57" src="https://user-images.githubusercontent.com/21701724/178128595-d1a1be18-5bde-4f4e-904d-fdb20cbde245.png">
 
-### Usage
+## Usage
+
 ```
 $ localizable-gen --help
 OVERVIEW: A Swift command-line tool to generate localizable from Google
@@ -38,25 +53,24 @@ SUBCOMMANDS:
 ```
 
 ### Installation using [Mint](https://github.com/yonaskolb/mint)
-You can install Poes using Mint as follows:
+You can install LocalizableGen using Mint as follows:
 
 ```
 $ mint install huynguyen-n/LocalizableGen
 ```
 
-### Development
-- `cd` into the repository
-- run `swift package generate-xcodeproj` (Generates an Xcode project for development)
-- Run the following command to try it out:
+## Development
 
-```bash
-swift run LocalizableGen --help
-```
+- Clone this repo
+- Open Xcode by `Package.swift` file.
 
 ## FAQ
 
 ### Why is it "LocalizableGen"?
+When app/module stable and not much feature in that Sprint. Frequently developers will be ask for update the strings file 🤔 I feel it's take time and would like to have a solution for that -> `LocaliableGen` came.
 
+### What problem does it solve?
+BA, PO or Designers will be ask to update the Spreadsheet. Developer will generate the `Localizable.strings` or `strings.xml` and replace the current file.
 
 ### Why is there a `LocalizableGenCore` framework?
 This makes it really easy to eventually create a Mac App with a UI around it 🚀

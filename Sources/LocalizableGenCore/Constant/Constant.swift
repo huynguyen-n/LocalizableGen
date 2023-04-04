@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SWXMLHash
 
 enum Platform {
     case iOS
@@ -41,6 +42,24 @@ enum Platform {
         }
     }
 
+    func buildDictionary(_ data: Data) throws -> CSVDictionaryFormat {
+        switch self {
+        case .iOS:
+            return try! PropertyListDecoder().decode([String: String].self, from: data)
+        case .Android:
+            let xml = XMLHash.lazy(data)
+            var dict: CSVDictionaryFormat = [:]
+            for stringEle in xml["resources"]["string"].all {
+                guard let key = stringEle.element?.attribute(by: "name")?.text,
+                      let value = stringEle.element?.text else {
+                    continue
+                }
+                dict[key] = value
+            }
+            return dict
+        }
+    }
+
     init?(string: String) {
         switch string.lowercased() {
         case "ios":
@@ -63,8 +82,8 @@ struct Constant {
 
         struct Message {
 
-            static let intro = "A Swift command-line tool to generate localizable from Google Sheet."
-            static let email = "Before to start, share your Spreadsheet with this email\nEmail:\t"
+            static let intro = "A Swift command-line tool to generate localizable from Google Sheet. "
+            static let email = "Before to start, share your Spreadsheet with this email.\n"
         }
     }
 

@@ -38,8 +38,8 @@ struct Generate: ParsableCommand, LocalizableConfigFilePr {
         let queryItem = GetSpreadSheetRequestQueryItem(spreadSheetId: config.googleSheetID, sheet: sheet)
         GetSpreadSheetRequest(queryItem: queryItem).excute { results in
             let values = results.valueRanges.first().values
-            Log.message("\(values)")
             let csvDictionary = values.toDictionary(with: 1)
+            if Log.isVerbose { csvDictionary.print() }
             let localizableFile = LocalizableFile(module: range.sheetName,
                                                   language: values.language,
                                                   data: csvDictionary)
