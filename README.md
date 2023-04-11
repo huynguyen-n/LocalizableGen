@@ -8,6 +8,8 @@ LocalizableGen will helps you working with `Localizable.strings`(iOS) and `strin
 - [x] Generate that files from Spreadsheet for each languages you selected.
 - [x] Update the Spreadsheet from the files you already generated.
 
+<a href='https://ko-fi.com/K3K0KATVS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 ## Dependencies
 
 Thanks a lot to all of dependencies I have used in this project. If not, this tool can not be done. 🙏🙏🙏
