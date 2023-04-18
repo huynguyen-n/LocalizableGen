@@ -8,8 +8,6 @@ LocalizableGen will helps you working with `Localizable.strings`(iOS) and `strin
 - [x] Generate that files from Spreadsheet for each languages you selected.
 - [x] Update the Spreadsheet from the files you already generated.
 
-<a href='https://ko-fi.com/K3K0KATVS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
 ## Dependencies
 
 Thanks a lot to all of dependencies I have used in this project. If not, this tool can not be done. 🙏🙏🙏
@@ -76,3 +74,11 @@ BA, PO or Designers will be ask to update the Spreadsheet. Developer will genera
 
 ### Why is there a `LocalizableGenCore` framework?
 This makes it really easy to eventually create a Mac App with a UI around it 🚀
+
+## Donation
+**LocalizableGen** is free for you to use. I work on the app in my spare time. If you would like to support the development by donating, you can do so.
+
+<a href='https://ko-fi.com/K3K0KATVS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> <a href='https://paypal.me/huynguyen1012' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://raw.githubusercontent.com/huynguyen-n/donation-buttons/main/donate-with-Paypal.svg' border='0' alt='Donate with Paypal' /></a>
+
+
+**Thank you for being a part of the **LocalizableGen** community and supporting my open-source project!**
